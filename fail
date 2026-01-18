@@ -1,0 +1,4 @@
+from calc import add   # albo: from app.calc import add
+
+def test_add_fail():
+    assert add(2, 3) == 6
