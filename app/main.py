@@ -14,13 +14,14 @@ def home():
   <title>FastAPI mini web</title>
 </head>
 <body style="font-family: Arial; padding: 20px;">
-  <h1>Siema 👋</h1>
-  <button id="btn">Kliknij</button>
+  <h1>🎉IO deployment🎉</h1>
+  <h2>Jan Rodz, Pawel Szczebiot, Karol Strzeblecki</h2>
+  <button id="btn">Kliknij aby uzyskac dane z endpointu</button>
   <pre id="out"></pre>
 
   <script>
     document.getElementById("btn").addEventListener("click", async () => {
-      const r = await fetch("/api/hello");
+      const r = await fetch("/api");
       const data = await r.json();
       document.getElementById("out").textContent = JSON.stringify(data, null, 2);
     });
