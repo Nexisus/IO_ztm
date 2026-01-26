@@ -19,10 +19,7 @@ jobs:
 
       - name: Sync files
         run: |
-         rsync -az --delete \
-          --exclude '.venv/' \
-          --exclude '__pycache__/' \
-          --exclude '*.pyc' \
+         rsync -az 
           ./ user@server:/opt/myfastapi/
             ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.APP_DIR }}/
 
