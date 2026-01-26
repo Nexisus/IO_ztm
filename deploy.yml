@@ -1,0 +1,43 @@
+name: Deploy FastAPI
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Sync files
+        run: |
+          rsync -az --delete \
+            --exclude ".git" \
+            --exclude ".github" \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.APP_DIR }}/
+
+      - name: Install deps + restart
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF2'
+            set -e
+            cd "${APP_DIR:-/opt/myfastapi}"
+
+            if [ ! -d ".venv" ]; then
+              python3 -m venv .venv
+            fi
+
+            ./.venv/bin/pip install -U pip
+            ./.venv/bin/pip install -r requirements.txt
+
+            sudo systemctl restart myfastapi
+          EOF2
+        env:
+          APP_DIR: ${{ secrets.APP_DIR }}
