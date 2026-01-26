@@ -1,4 +1,4 @@
 why
   po prostu pcham
     ciezka robota
-      strasznie
+      strasznie d
