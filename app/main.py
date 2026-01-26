@@ -14,9 +14,10 @@ def home():
   <title>FastAPI mini web</title>
 </head>
 <body style="font-family: Arial; padding: 20px;">
-  <h1>🎉IO deployment🎉</h1>
+  <h1>IO deployment</h1>
   <h2>Jan Rodz, Pawel Szczebiot, Karol Strzeblecki</h2>
-  <button id="btn">Kliknij aby uzyskac dane z endpointu</button>
+  <h3>
+  <button id="btn">Kliknij aby uzyskac dane z endpointu /api</button>
   <pre id="out"></pre>
 
   <script>
