@@ -33,4 +33,9 @@ def home():
 
 @app.get("/api")
 def api_hello():
-    return {"ok": True, "msg": "Działa HTML + JS z FastAPI ✅"}
+    return {
+        "Autor1":"JR",
+        "Autor2":"KS",
+        "Autor3":"PS",
+        "Lorem Ipsum":"dolor sit amet"
+    }
