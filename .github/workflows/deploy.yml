@@ -1,0 +1,51 @@
+name: Deploy FastAPI (VPS)
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync
+        shell: bash
+        run: |
+          rsync -az --delete \
+            --exclude ".git" \
+            --exclude ".github" \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.APP_DIR }}/"
+
+      - name: Install deps and restart service
+        shell: bash
+        run: |
+          ssh "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" << 'EOF'
+            set -e
+            cd "${APP_DIR}"
+
+            if [ ! -d ".venv" ]; then
+              python3 -m venv .venv
+            fi
+
+            ./.venv/bin/pip install -U pip
+            if [ -f requirements.txt ]; then
+              ./.venv/bin/pip install -r requirements.txt
+            fi
+
+            sudo systemctl restart myfastapi
+            sudo systemctl --no-pager status myfastapi || true
+          EOF
+        env:
+          APP_DIR: ${{ secrets.APP_DIR }}
